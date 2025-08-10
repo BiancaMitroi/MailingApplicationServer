@@ -28,6 +28,7 @@ class RegisterController extends Controller
             'password' => $hashedPassword,
             'salt'     => $salt,
             'access_token' => '',
+            'no_of_accesses' => 0, // Initialize no_of_accesses
         ]);
 
         return response()->json(['user' => $user], 201);

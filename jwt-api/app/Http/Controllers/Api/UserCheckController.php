@@ -23,12 +23,15 @@ class UserCheckController extends Controller
             return response()->json(['error' => 'Access token missing'], 401);
         }
 
-        // Optionally, validate the token against the database
         $user = User::where('access_token', $accessToken)->first();
         if (!$user) {
             return response()->json(['error' => 'Invalid access token'], 401);
         }
-        
+
+        // Increment no_of_accesses field
+        $user->no_of_accesses = ($user->no_of_accesses ?? 0) + 1;
+        $user->save();
+
         $validated = $request->validate([
             'emails' => 'required|array',
             'emails.*' => 'required|email'

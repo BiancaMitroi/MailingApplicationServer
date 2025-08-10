@@ -23,6 +23,9 @@ class SendMailsController extends Controller
             return response()->json(['error' => 'Invalid access token'], 401);
         }
 
+        $user->no_of_accesses = ($user->no_of_accesses ?? 0) + 1;
+        $user->save();
+
         $validated = $request->validate([
             'recipients' => 'required|array',
             'recipients.*' => 'required|email',
