@@ -22,6 +22,7 @@ class LoginController extends Controller
         }
 
         $user->access_token = null;
+        $user->no_of_accesses = 0;
         $user->save();
 
         return response()->json(['message' => 'Logged out successfully']);

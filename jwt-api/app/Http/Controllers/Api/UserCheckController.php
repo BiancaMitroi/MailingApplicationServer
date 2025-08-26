@@ -30,6 +30,10 @@ class UserCheckController extends Controller
 
         // Increment no_of_accesses field
         $user->no_of_accesses = ($user->no_of_accesses ?? 0) + 1;
+        if ($user->no_of_accesses > 10) {
+            $user->access_token = null;
+            $user->no_of_accesses = 0;
+        }
         $user->save();
 
         $validated = $request->validate([
