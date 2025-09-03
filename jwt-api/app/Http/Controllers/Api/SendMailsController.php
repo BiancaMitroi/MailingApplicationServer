@@ -33,12 +33,20 @@ class SendMailsController extends Controller
         $user->save();
 
         $validated = $request->validate([
-            'recipients' => 'required|array',
-            'recipients.*' => 'required|email',
+            'recipients' => 'required|string',
             'subject' => 'required|string',
             'message' => 'required|string',
         ]);
         \Log::info('Email validation passed', ['data' => $validated]);
+
+        // Split recipients string into array
+        $recipients = array_map('trim', explode(',', $validated['recipients']));
+        // Validate each recipient as email
+        foreach ($recipients as $email) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return response()->json(['error' => "Invalid email: $email"], 422);
+            }
+        }
 
         // Get attachments as UploadedFile objects (if any)
         $attachments = $request->file('attachments', []);
@@ -47,7 +55,7 @@ class SendMailsController extends Controller
         }
 
         $errors = [];
-        foreach ($validated['recipients'] as $recipient) {
+        foreach ($recipients as $recipient) {
             try {
                 Mail::raw($validated['message'], function ($mail) use ($recipient, $validated, $attachments, &$errors) {
                     $mail->to($recipient)
