@@ -20,7 +20,7 @@ class RegisterController extends Controller
 
         $salt = bin2hex(random_bytes(16));
         $hashedPassword = Hash::make($validated['password'] . $salt);
-
+//generare parola
         $user = User::create([
             'firstname'     => $validated['firstName'],
             'lastname'      => $validated['lastName'],
